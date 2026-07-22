@@ -1,0 +1,120 @@
+/**
+ * Today briefing generator (§2 step 1).
+ *
+ * Produces the copy-paste text that configures a ChatGPT Voice session:
+ * scenario + difficulty + the review-due expressions to weave in (the compound
+ * step), wrapped in the standing coaching rules and the closing JSON contract.
+ *
+ * Two output modes:
+ *   - `full`   : the entire briefing, for a plain ChatGPT chat.
+ *   - `compact`: just the session parameters, for use inside a Custom GPT that
+ *                already holds the standing instructions (friction budget, §2).
+ */
+
+import type { Difficulty, Expression, SessionMode } from './types';
+
+export interface BriefingScenario {
+  /** Short id used for the topic label. */
+  key: string;
+  title: string;
+  /** One-line setup ChatGPT uses to frame the roleplay. */
+  prompt: string;
+  mode: SessionMode;
+}
+
+export interface BriefingInput {
+  scenario: BriefingScenario;
+  difficulty: Difficulty;
+  targets: Expression[];
+  sessionMinutes: number;
+  koreanHelpEnabled: boolean;
+}
+
+const DIFFICULTY_GUIDANCE: Record<Difficulty, string> = {
+  Comfortable:
+    'Speak slowly and simply. Use common vocabulary. Rephrase if I hesitate.',
+  Natural:
+    'Speak at a normal native pace with everyday business vocabulary.',
+  Challenging:
+    'Speak quickly with rich, idiomatic, executive-level vocabulary. Push me.',
+};
+
+const MODE_LABEL: Record<SessionMode, string> = {
+  JustTalk: 'Just Talk',
+  TopicTalk: 'Topic Talk',
+  ScenarioTalk: 'Scenario Talk',
+  ChallengeTalk: 'Challenge Talk',
+};
+
+/** The exact JSON contract (§7) ChatGPT must emit at the end of the session. */
+export const CONTRACT_TEMPLATE = `{
+  "session": { "topic": "...", "mode": "...", "difficulty": "..." },
+  "corrections": [
+    { "user_said": "...", "corrected": "...", "natural": "...", "note_en": "one-line explanation in easy English" }
+  ],
+  "new_expressions": [
+    { "expression": "...", "meaning_en": "...", "example": "..." }
+  ],
+  "target_expression_usage": [
+    { "expression": "...", "used_correctly": true }
+  ],
+  "focus_next": "one sentence"
+}`;
+
+function targetLines(targets: Expression[]): string {
+  if (targets.length === 0) {
+    return '(none due today — introduce fresh useful phrases instead)';
+  }
+  return targets.map((t) => `- "${t.text}" — ${t.meaning}`).join('\n');
+}
+
+export function buildFullBriefing(input: BriefingInput): string {
+  const { scenario, difficulty, targets, sessionMinutes, koreanHelpEnabled } = input;
+
+  const rules = [
+    'English only. Never switch to Korean during the conversation.',
+    'Do NOT correct me mid-conversation — let the ideas flow.',
+    'Ask follow-up questions so I keep speaking; I should talk ~70% of the time.',
+    koreanHelpEnabled
+      ? 'Only if I explicitly say "help in Korean", give a one-line Korean hint, then return to English.'
+      : 'Do not use Korean at all.',
+  ];
+
+  return [
+    `You are my English speaking coach. This is a ${sessionMinutes}-minute ${MODE_LABEL[scenario.mode]} voice session.`,
+    '',
+    `TOPIC / SCENARIO: ${scenario.title}`,
+    scenario.prompt,
+    '',
+    `DIFFICULTY: ${difficulty}. ${DIFFICULTY_GUIDANCE[difficulty]}`,
+    '',
+    'WEAVE THESE EXPRESSIONS IN naturally (these are my spaced-review items — create situations where I would use them):',
+    targetLines(targets),
+    '',
+    'RULES DURING THE SESSION:',
+    ...rules.map((r) => `- ${r}`),
+    '',
+    'AT THE VERY END of the session, output EXACTLY ONE fenced JSON code block',
+    'in this shape and nothing after it:',
+    '```json',
+    CONTRACT_TEMPLATE,
+    '```',
+    '',
+    'Fill target_expression_usage with each weaved expression and whether I used it correctly.',
+    'Keep note_en explanations in easy English. Begin the conversation now.',
+  ].join('\n');
+}
+
+/** Compact parameters for a Custom GPT that already holds the standing rules. */
+export function buildCompactBriefing(input: BriefingInput): string {
+  const { scenario, difficulty, targets, sessionMinutes } = input;
+  const targetsInline =
+    targets.length > 0 ? targets.map((t) => `"${t.text}"`).join(', ') : 'none due';
+  return [
+    `Mode: ${MODE_LABEL[scenario.mode]}`,
+    `Topic: ${scenario.title}`,
+    `Difficulty: ${difficulty}`,
+    `Minutes: ${sessionMinutes}`,
+    `Review targets: ${targetsInline}`,
+  ].join('\n');
+}
