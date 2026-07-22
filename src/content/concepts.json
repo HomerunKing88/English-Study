@@ -1,0 +1,582 @@
+[
+  {
+    "slug": "bond",
+    "term": "Bond",
+    "category": "Fixed Income",
+    "easyDef": "A bond is basically an IOU: you lend money to a company or government, and they promise to pay you back later with interest.",
+    "standardDef": "A bond is a debt security in which an investor loans money to an issuer for a defined period. In return, the issuer promises to pay periodic interest and repay the principal at maturity.",
+    "professionalDef": "A bond is a fixed-income instrument representing a contractual obligation of the issuer to pay scheduled coupon payments and return the face value (par) at maturity. Its price is the present value of future cash flows discounted at the prevailing market yield, and it exposes holders to interest rate, credit, and reinvestment risk.",
+    "examples": [
+      "We're planning to issue a ten-year bond to refinance the existing debt.",
+      "When rates went up, the price of our long-dated bonds dropped sharply.",
+      "The bond matures in 2030, so we'll get the principal back then."
+    ],
+    "collocations": [
+      "issue a bond",
+      "the bond matures",
+      "callable bond",
+      "corporate bond",
+      "bond yield"
+    ],
+    "related": ["coupon", "yield", "yield-to-maturity", "duration", "credit-spread"],
+    "compare": [
+      { "term": "Equity", "distinction": "A bond is debt you get repaid; equity is ownership with no repayment promise." }
+    ],
+    "commonMistakes": [
+      "Saying 'buy a bond's interest' instead of 'the coupon' or 'the yield'.",
+      "Confusing the bond's price with its face value; they move independently."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "coupon",
+    "term": "Coupon",
+    "category": "Fixed Income",
+    "easyDef": "The coupon is the regular interest payment a bond pays you, usually every six months or year.",
+    "standardDef": "The coupon is the periodic interest payment made to a bondholder, expressed as an annual percentage of the bond's face value. It is fixed at issuance for most bonds and paid on a set schedule until maturity.",
+    "professionalDef": "The coupon rate is the nominal annual interest, stated as a percentage of par, that the issuer contractually pays the bondholder, typically in semi-annual installments. It differs from the current yield and the yield-to-maturity, which incorporate the bond's market price and time value of money.",
+    "examples": [
+      "The bond carries a five percent coupon paid semi-annually.",
+      "Since it's a zero-coupon bond, there are no periodic payments at all.",
+      "Even with a high coupon, the total return depends on the price you paid."
+    ],
+    "collocations": [
+      "coupon rate",
+      "coupon payment",
+      "semi-annual coupon",
+      "zero-coupon bond",
+      "clip the coupon"
+    ],
+    "related": ["bond", "yield", "yield-to-maturity"],
+    "compare": [
+      { "term": "Yield", "distinction": "The coupon is fixed at issuance; the yield changes with the bond's market price." }
+    ],
+    "commonMistakes": [
+      "Using 'coupon' and 'yield' interchangeably; they are only equal when a bond trades at par.",
+      "Forgetting most coupons are quoted annually but paid semi-annually."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "yield",
+    "term": "Yield",
+    "category": "Fixed Income",
+    "easyDef": "Yield is how much you actually earn on an investment each year, shown as a percentage of what you paid.",
+    "standardDef": "Yield is the income return on an investment, typically expressed as an annual percentage. For a bond, it reflects the relationship between the coupon income and the current market price, and it moves inversely to price.",
+    "professionalDef": "Yield is a measure of the rate of return on a fixed-income security relative to its market price. Common variants include current yield (annual coupon divided by price) and yield-to-maturity (the internal rate of return equating discounted cash flows to price); yields move inversely to prices.",
+    "examples": [
+      "The yield on the ten-year Treasury rose to four percent this morning.",
+      "We're chasing yield, so we're moving into higher-risk credit.",
+      "As the price fell, the yield naturally moved higher."
+    ],
+    "collocations": [
+      "yield curve",
+      "current yield",
+      "yield pickup",
+      "chase yield",
+      "yield compression"
+    ],
+    "related": ["bond", "coupon", "yield-to-maturity", "credit-spread"],
+    "compare": [
+      { "term": "Coupon", "distinction": "Yield reflects the price you paid; the coupon is a fixed contractual rate." }
+    ],
+    "commonMistakes": [
+      "Saying yield 'goes up with price'; yield and price move inversely.",
+      "Confusing current yield with yield-to-maturity."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "yield-to-maturity",
+    "term": "Yield to Maturity",
+    "category": "Fixed Income",
+    "easyDef": "Yield to maturity is the total return you'd get if you bought a bond today and held it until it pays back, counting all interest and price differences.",
+    "standardDef": "Yield to maturity (YTM) is the total anticipated return on a bond if it is held until it matures, assuming all coupons are reinvested at the same rate. It is the single discount rate that makes the present value of all future cash flows equal to the bond's current market price.",
+    "professionalDef": "Yield to maturity is the internal rate of return of a bond's cash flows, i.e., the discount rate at which the present value of all coupon payments plus the redemption of par equals the current market price. It assumes the bond is held to maturity and coupons are reinvested at the YTM, an assumption that introduces reinvestment risk.",
+    "examples": [
+      "At the current price, the yield to maturity works out to about three point eight percent.",
+      "We compare bonds on a yield-to-maturity basis, not just the coupon.",
+      "If you hold it to maturity, your realized return should be close to the YTM."
+    ],
+    "collocations": [
+      "calculate yield to maturity",
+      "on a yield-to-maturity basis",
+      "YTM assumption",
+      "reinvestment assumption",
+      "yield to call"
+    ],
+    "related": ["bond", "coupon", "yield", "duration"],
+    "compare": [
+      { "term": "Current Yield", "distinction": "YTM includes price gain or loss to maturity; current yield only counts coupon over price." }
+    ],
+    "commonMistakes": [
+      "Assuming YTM is guaranteed; it depends on reinvesting coupons at the same rate.",
+      "Treating YTM and coupon rate as the same number."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "duration",
+    "term": "Duration",
+    "category": "Fixed Income",
+    "easyDef": "Duration tells you how much a bond's price will move if interest rates change; higher duration means bigger swings.",
+    "standardDef": "Duration is a measure of a bond's price sensitivity to changes in interest rates, expressed in years. A higher duration means the bond's price will fall more when rates rise, and rise more when rates fall.",
+    "professionalDef": "Modified duration is the first-derivative measure of a bond's percentage price change for a given change in yield, approximately equal to Macaulay duration divided by (1 + yield/frequency). It provides a linear estimate of interest rate risk and is complemented by convexity for larger yield moves.",
+    "examples": [
+      "This portfolio has a duration of seven years, so it's quite rate-sensitive.",
+      "We shortened duration ahead of the rate hike to protect capital.",
+      "A one percent rise in rates would cost us roughly five percent given our duration."
+    ],
+    "collocations": [
+      "modified duration",
+      "shorten duration",
+      "extend duration",
+      "duration risk",
+      "portfolio duration"
+    ],
+    "related": ["bond", "yield-to-maturity", "convexity", "credit-spread"],
+    "compare": [
+      { "term": "Convexity", "distinction": "Duration is the linear price sensitivity; convexity corrects for the curvature at larger rate moves." }
+    ],
+    "commonMistakes": [
+      "Thinking duration is just time to maturity; it is a weighted, rate-sensitivity measure.",
+      "Ignoring that higher coupons reduce duration."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "convexity",
+    "term": "Convexity",
+    "category": "Fixed Income",
+    "easyDef": "Convexity measures how the relationship between a bond's price and interest rates curves, making duration estimates more accurate for big rate moves.",
+    "standardDef": "Convexity measures the curvature in the relationship between a bond's price and its yield. It refines duration by accounting for the fact that price sensitivity itself changes as yields move, and positive convexity benefits the holder when rates move sharply in either direction.",
+    "professionalDef": "Convexity is the second-derivative measure of a bond's price with respect to yield, capturing the nonlinearity that duration alone omits. A positive-convexity instrument gains more when yields fall than it loses when yields rise by the same amount; callable bonds and mortgage-backed securities can exhibit negative convexity.",
+    "examples": [
+      "For large rate moves we add a convexity adjustment to the duration estimate.",
+      "Positive convexity means the bond outperforms in a sharp rate rally.",
+      "Callable bonds can show negative convexity near the call price."
+    ],
+    "collocations": [
+      "positive convexity",
+      "negative convexity",
+      "convexity adjustment",
+      "convexity risk",
+      "duration and convexity"
+    ],
+    "related": ["bond", "duration", "yield-to-maturity"],
+    "compare": [
+      { "term": "Duration", "distinction": "Convexity captures the curvature that duration's straight-line estimate misses." }
+    ],
+    "commonMistakes": [
+      "Ignoring convexity for large yield changes, where duration alone is inaccurate.",
+      "Assuming all bonds have positive convexity."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "credit-spread",
+    "term": "Credit Spread",
+    "category": "Fixed Income",
+    "easyDef": "A credit spread is the extra interest a riskier borrower pays compared to a safe government bond.",
+    "standardDef": "A credit spread is the difference in yield between a corporate bond and a risk-free benchmark of the same maturity. It compensates investors for the additional credit and liquidity risk of the issuer, and it widens when the market perceives higher default risk.",
+    "professionalDef": "A credit spread is the yield premium of a credit-risky bond over a matched-maturity risk-free rate, expressed in basis points, compensating for expected default loss, credit-migration risk, and a liquidity premium. Spreads widen in risk-off environments and are a primary driver of relative-value trading in credit markets.",
+    "examples": [
+      "The credit spread on that name widened fifty basis points after the downgrade.",
+      "We're getting paid a two hundred basis point spread over Treasuries.",
+      "Tightening credit spreads suggest the market is more risk-on."
+    ],
+    "collocations": [
+      "spread widens",
+      "spread tightens",
+      "spread over Treasuries",
+      "basis points of spread",
+      "credit spread risk"
+    ],
+    "related": ["bond", "yield", "duration", "liquidity"],
+    "compare": [
+      { "term": "Yield", "distinction": "The credit spread is only the risk premium portion; total yield also includes the risk-free rate." }
+    ],
+    "commonMistakes": [
+      "Confusing spread widening (bad for prices) with rising yields generally.",
+      "Quoting spreads in percent instead of basis points."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "equity",
+    "term": "Equity",
+    "category": "Equity",
+    "easyDef": "Equity is ownership in a company; if you own equity, you own a slice of the business.",
+    "standardDef": "Equity represents ownership interest in a company, typically in the form of shares. Equity holders have a residual claim on assets and earnings after all debts are paid, and they may receive dividends and capital appreciation.",
+    "professionalDef": "Equity is a residual ownership claim on a firm's assets after satisfying all liabilities, conferring voting rights and entitlement to distributed earnings. On the balance sheet it equals total assets minus total liabilities; as a security it prices the discounted value of expected future cash flows to shareholders and ranks junior to all debt in the capital structure.",
+    "examples": [
+      "We raised fifty million in equity to fund the expansion.",
+      "As an equity holder, you're last in line if the company is wound up.",
+      "The private equity firm took a majority equity stake."
+    ],
+    "collocations": [
+      "equity stake",
+      "raise equity",
+      "equity holder",
+      "return on equity",
+      "equity capital"
+    ],
+    "related": ["dividend", "price-earnings-ratio", "market-capitalization", "bond"],
+    "compare": [
+      { "term": "Bond", "distinction": "Equity is ownership with residual claims; a bond is a senior debt claim that gets repaid first." }
+    ],
+    "commonMistakes": [
+      "Using 'equity' only to mean stock, forgetting it also means the balance-sheet net worth.",
+      "Assuming equity holders are repaid before creditors; they are last in line."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "dividend",
+    "term": "Dividend",
+    "category": "Equity",
+    "easyDef": "A dividend is a share of a company's profit paid out to its owners, usually in cash.",
+    "standardDef": "A dividend is a distribution of a portion of a company's earnings to its shareholders, typically paid in cash on a regular schedule. The board of directors decides whether to declare a dividend and at what level.",
+    "professionalDef": "A dividend is a board-authorized distribution of retained or current earnings to equity holders, paid pro rata per share and subject to available distributable reserves. Its declaration affects the ex-dividend price, and the dividend policy signals management's view of sustainable earnings and capital-allocation priorities.",
+    "examples": [
+      "The board declared a quarterly dividend of thirty cents a share.",
+      "They cut the dividend to preserve cash during the downturn.",
+      "We favor stocks with a stable and growing dividend."
+    ],
+    "collocations": [
+      "declare a dividend",
+      "dividend yield",
+      "cut the dividend",
+      "dividend payout ratio",
+      "ex-dividend date"
+    ],
+    "related": ["equity", "price-earnings-ratio", "market-capitalization"],
+    "compare": [
+      { "term": "Coupon", "distinction": "A dividend is a discretionary equity payout; a coupon is a contractual bond obligation." }
+    ],
+    "commonMistakes": [
+      "Assuming dividends are guaranteed; they can be cut or suspended.",
+      "Confusing dividend yield with total return."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "price-earnings-ratio",
+    "term": "Price-Earnings Ratio",
+    "category": "Equity",
+    "easyDef": "The price-earnings ratio tells you how much investors are paying for each dollar of a company's profit.",
+    "standardDef": "The price-earnings (P/E) ratio compares a company's share price to its earnings per share. It is a widely used valuation multiple indicating how much investors are willing to pay for a unit of earnings, with higher values often implying higher growth expectations.",
+    "professionalDef": "The price-earnings ratio is a valuation multiple equal to market price per share divided by earnings per share, computed on a trailing or forward basis. It reflects the market's implied required return and expected earnings growth, and it is most meaningful when compared across peers or against a company's own history, adjusting for capital structure and accounting differences.",
+    "examples": [
+      "The stock trades at a P/E of twenty-five, a premium to its peers.",
+      "On a forward P/E basis, it actually looks cheap.",
+      "A high price-earnings ratio prices in a lot of future growth."
+    ],
+    "collocations": [
+      "trade at a P/E of",
+      "forward P/E",
+      "trailing P/E",
+      "P/E multiple",
+      "P/E expansion"
+    ],
+    "related": ["equity", "dividend", "market-capitalization", "discounted-cash-flow"],
+    "compare": [
+      { "term": "Market Capitalization", "distinction": "P/E is a per-earnings valuation ratio; market cap is the total equity value in dollars." }
+    ],
+    "commonMistakes": [
+      "Comparing P/E ratios across industries without adjusting for growth or risk.",
+      "Ignoring that negative earnings make the P/E meaningless."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "market-capitalization",
+    "term": "Market Capitalization",
+    "category": "Equity",
+    "easyDef": "Market capitalization is the total value of a company's shares, found by multiplying the share price by the number of shares.",
+    "standardDef": "Market capitalization is the total market value of a company's outstanding shares, calculated as the current share price multiplied by the number of shares outstanding. It is a common measure of a company's size and is used to classify firms as large-, mid-, or small-cap.",
+    "professionalDef": "Market capitalization is the aggregate market value of a firm's outstanding equity, equal to share price times shares outstanding. It represents only the equity portion of the capital structure; enterprise value adds net debt and other claims to capture the total value of the operating business.",
+    "examples": [
+      "The company just crossed a one trillion dollar market cap.",
+      "We only invest in large-cap names for liquidity reasons.",
+      "Its market capitalization doesn't include the debt on the balance sheet."
+    ],
+    "collocations": [
+      "market cap",
+      "large-cap",
+      "small-cap",
+      "market cap weighting",
+      "cross a market cap milestone"
+    ],
+    "related": ["equity", "price-earnings-ratio", "liquidity", "dividend"],
+    "compare": [
+      { "term": "Enterprise Value", "distinction": "Market cap is equity value only; enterprise value adds net debt to value the whole business." }
+    ],
+    "commonMistakes": [
+      "Treating market cap as the price to buy the whole company; enterprise value is more complete.",
+      "Confusing market cap with the total assets on the balance sheet."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "volatility",
+    "term": "Volatility",
+    "category": "Risk",
+    "easyDef": "Volatility is how much a price jumps around; high volatility means big, fast swings up and down.",
+    "standardDef": "Volatility measures the degree of variation in an asset's price over time, usually expressed as the annualized standard deviation of returns. Higher volatility indicates greater uncertainty and risk, and it is a key input in option pricing.",
+    "professionalDef": "Volatility is the annualized standard deviation of an asset's log returns, quantifying the dispersion of returns around the mean. Realized (historical) volatility is measured from past data, while implied volatility is backed out of option prices; both are central inputs to risk models and derivatives valuation.",
+    "examples": [
+      "Volatility spiked ahead of the earnings announcement.",
+      "We size positions based on their volatility, not just their weight.",
+      "Implied volatility is trading rich relative to realized."
+    ],
+    "collocations": [
+      "implied volatility",
+      "realized volatility",
+      "volatility spike",
+      "low volatility environment",
+      "volatility skew"
+    ],
+    "related": ["leverage", "beta", "option", "hedge"],
+    "compare": [
+      { "term": "Beta", "distinction": "Volatility is total price variability; beta measures only the part that moves with the market." }
+    ],
+    "commonMistakes": [
+      "Equating volatility with loss; it measures dispersion in both directions.",
+      "Confusing implied volatility with realized volatility."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "beta",
+    "term": "Beta",
+    "category": "Risk",
+    "easyDef": "Beta tells you how much a stock tends to move compared to the overall market; a beta of one moves in line with the market.",
+    "standardDef": "Beta measures a stock's sensitivity to movements in the broader market. A beta above one means the stock tends to amplify market moves, while a beta below one means it moves less than the market. It captures systematic, non-diversifiable risk.",
+    "professionalDef": "Beta is the slope coefficient from regressing an asset's excess returns on the market's excess returns, equal to the covariance of the asset with the market divided by the market's variance. It quantifies systematic risk in the Capital Asset Pricing Model and is a determinant of an asset's required return and cost of equity.",
+    "examples": [
+      "This name has a beta of one point three, so it amplifies market moves.",
+      "We lowered portfolio beta to reduce our market exposure.",
+      "A defensive stock with a low beta held up well in the selloff."
+    ],
+    "collocations": [
+      "high beta",
+      "low beta",
+      "portfolio beta",
+      "beta to the market",
+      "beta-adjusted exposure"
+    ],
+    "related": ["volatility", "credit-spread", "cost-of-capital", "equity"],
+    "compare": [
+      { "term": "Volatility", "distinction": "Beta measures only market-related (systematic) risk; volatility captures total risk." }
+    ],
+    "commonMistakes": [
+      "Assuming high beta always means high return; it only means high systematic risk.",
+      "Treating beta as stable; it changes over time and with the estimation window."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "option",
+    "term": "Option",
+    "category": "Derivatives",
+    "easyDef": "An option is a contract that gives you the right, but not the obligation, to buy or sell something at a set price by a certain date.",
+    "standardDef": "An option is a derivative contract granting the holder the right, but not the obligation, to buy (call) or sell (put) an underlying asset at a specified strike price before or at expiration. The buyer pays a premium for this right, while the seller takes on the obligation if exercised.",
+    "professionalDef": "An option is a contingent claim whose payoff depends nonlinearly on the price of an underlying asset relative to a strike. Its value decomposes into intrinsic and time value and is driven by the Black-Scholes inputs spot, strike, time, rate, and volatility, with sensitivities captured by the Greeks such as delta, gamma, and vega.",
+    "examples": [
+      "We bought call options to get upside exposure with limited downside.",
+      "The premium on that put option is expensive given the high volatility.",
+      "If the stock stays below the strike, the option expires worthless."
+    ],
+    "collocations": [
+      "call option",
+      "put option",
+      "strike price",
+      "exercise an option",
+      "option premium"
+    ],
+    "related": ["futures", "volatility", "hedge", "leverage"],
+    "compare": [
+      { "term": "Futures", "distinction": "An option is a right you can walk away from; a futures contract is a binding obligation." }
+    ],
+    "commonMistakes": [
+      "Saying you 'must' exercise an option; the holder has the right, not the obligation.",
+      "Confusing the premium paid with the strike price."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "futures",
+    "term": "Futures",
+    "category": "Derivatives",
+    "easyDef": "A futures contract is a binding agreement to buy or sell something at a set price on a future date.",
+    "standardDef": "A futures contract is a standardized, exchange-traded agreement to buy or sell an underlying asset at a predetermined price on a specified future date. Both parties are obligated to transact, and positions are marked to market daily with margin requirements.",
+    "professionalDef": "A futures contract is an exchange-listed, standardized forward obligation cleared through a central counterparty, with daily mark-to-market settlement and variation margin. Its price reflects the spot price adjusted for cost of carry, and it is widely used for hedging and speculative exposure with embedded leverage.",
+    "examples": [
+      "We're hedging the fuel exposure with oil futures.",
+      "The futures are trading in contango, above the spot price.",
+      "Daily margin calls kicked in as the futures position moved against us."
+    ],
+    "collocations": [
+      "futures contract",
+      "roll the futures",
+      "margin call",
+      "futures curve",
+      "long futures position"
+    ],
+    "related": ["option", "hedge", "leverage", "volatility"],
+    "compare": [
+      { "term": "Option", "distinction": "Futures obligate both sides to transact; an option is a right the holder may decline." }
+    ],
+    "commonMistakes": [
+      "Treating futures like options; both parties to a future are obligated.",
+      "Underestimating leverage and daily margin requirements."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "hedge",
+    "term": "Hedge",
+    "category": "Derivatives",
+    "easyDef": "To hedge is to make an offsetting bet that protects you from losses if your main investment goes the wrong way.",
+    "standardDef": "A hedge is a position taken to reduce or offset the risk of adverse price movements in another asset. It typically involves derivatives or correlated instruments that gain value when the primary exposure loses value, thereby limiting downside.",
+    "professionalDef": "A hedge is a risk-mitigating position constructed so that its payoff is negatively correlated with an existing exposure, reducing net variance. Effective hedging requires matching the hedge ratio and basis to the underlying, accepting that residual basis risk and hedging costs constrain how completely risk can be neutralized.",
+    "examples": [
+      "We put on a currency hedge to protect the overseas revenue.",
+      "The short position acts as a hedge against our long book.",
+      "Hedging isn't free; the cost eats into returns."
+    ],
+    "collocations": [
+      "put on a hedge",
+      "hedge ratio",
+      "natural hedge",
+      "hedge the exposure",
+      "unwind a hedge"
+    ],
+    "related": ["option", "futures", "leverage", "volatility"],
+    "compare": [
+      { "term": "Speculation", "distinction": "A hedge reduces existing risk; speculation takes on new risk to seek profit." }
+    ],
+    "commonMistakes": [
+      "Assuming a hedge removes all risk; basis risk usually remains.",
+      "Forgetting hedging has an ongoing cost that reduces returns."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "liquidity",
+    "term": "Liquidity",
+    "category": "Finance Fundamentals",
+    "easyDef": "Liquidity is how easily you can turn something into cash without moving its price much.",
+    "standardDef": "Liquidity refers to how quickly and easily an asset can be bought or sold in the market without significantly affecting its price. Highly liquid assets, like large-cap stocks or Treasuries, trade with tight spreads and deep volume.",
+    "professionalDef": "Liquidity is the degree to which an asset can be transacted at scale with minimal price impact and low transaction cost, reflected in bid-ask spreads, market depth, and turnover. Funding liquidity, the ability to meet cash obligations, is distinct from market liquidity and both can evaporate simultaneously in stressed markets.",
+    "examples": [
+      "There's not much liquidity in that name, so we scale in slowly.",
+      "During the crisis, liquidity dried up across the board.",
+      "We hold Treasuries partly for their liquidity."
+    ],
+    "collocations": [
+      "market liquidity",
+      "liquidity dries up",
+      "provide liquidity",
+      "liquidity risk",
+      "deep liquidity"
+    ],
+    "related": ["leverage", "market-capitalization", "volatility", "bond"],
+    "compare": [
+      { "term": "Solvency", "distinction": "Liquidity is about meeting short-term cash needs; solvency is about long-term ability to cover all obligations." }
+    ],
+    "commonMistakes": [
+      "Confusing liquidity (ease of selling) with profitability.",
+      "Assuming an asset that is liquid today will stay liquid in a crisis."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "leverage",
+    "term": "Leverage",
+    "category": "Finance Fundamentals",
+    "easyDef": "Leverage is using borrowed money to make a bigger investment, which magnifies both gains and losses.",
+    "standardDef": "Leverage is the use of borrowed capital or debt to increase the potential return of an investment. While it can amplify gains, it equally magnifies losses and increases the risk of financial distress if returns fall short of borrowing costs.",
+    "professionalDef": "Leverage is the amplification of returns on equity through the use of debt or derivative exposure, measured by ratios such as debt-to-equity or gross exposure to capital. It raises the volatility of equity returns and the probability of insolvency, since fixed financing costs must be met regardless of asset performance.",
+    "examples": [
+      "The buyout was financed with a lot of leverage.",
+      "Leverage cuts both ways; it magnified our losses in the drawdown.",
+      "We're running the fund at two times leverage."
+    ],
+    "collocations": [
+      "financial leverage",
+      "leverage ratio",
+      "lever up",
+      "deleverage",
+      "excessive leverage"
+    ],
+    "related": ["cost-of-capital", "volatility", "futures", "option"],
+    "compare": [
+      { "term": "Liquidity", "distinction": "Leverage is about how much debt magnifies returns; liquidity is about how easily assets convert to cash." }
+    ],
+    "commonMistakes": [
+      "Focusing only on how leverage boosts gains and ignoring how it magnifies losses.",
+      "Confusing operating leverage with financial leverage."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "discounted-cash-flow",
+    "term": "Discounted Cash Flow",
+    "category": "Finance Fundamentals",
+    "easyDef": "Discounted cash flow values something by adding up all the future cash it will make, adjusted for the fact that money later is worth less than money now.",
+    "standardDef": "Discounted cash flow (DCF) is a valuation method that estimates the value of an investment based on its expected future cash flows, discounted back to present value using a required rate of return. The sum of these present values represents the intrinsic value of the asset.",
+    "professionalDef": "Discounted cash flow analysis derives intrinsic value by projecting a set of future free cash flows and discounting them to present value at a rate reflecting their risk, typically the weighted average cost of capital, plus a terminal value. Its output is highly sensitive to the discount rate and terminal growth assumptions, making scenario and sensitivity analysis essential.",
+    "examples": [
+      "Our discounted cash flow model puts fair value around ninety dollars a share.",
+      "The DCF is very sensitive to the discount rate we assume.",
+      "We cross-checked the DCF against comparable multiples."
+    ],
+    "collocations": [
+      "DCF model",
+      "discount the cash flows",
+      "terminal value",
+      "present value",
+      "DCF valuation"
+    ],
+    "related": ["cost-of-capital", "price-earnings-ratio", "equity", "bond"],
+    "compare": [
+      { "term": "Price-Earnings Ratio", "distinction": "A DCF derives intrinsic value from cash flows; the P/E is a relative multiple based on market pricing." }
+    ],
+    "commonMistakes": [
+      "Over-relying on the terminal value, which often dominates the result.",
+      "Using an inconsistent discount rate relative to the cash flows being discounted."
+    ],
+    "savedForReview": false
+  },
+  {
+    "slug": "cost-of-capital",
+    "term": "Cost of Capital",
+    "category": "Finance Fundamentals",
+    "easyDef": "Cost of capital is the minimum return a company needs to earn to justify using its money from lenders and shareholders.",
+    "standardDef": "Cost of capital is the required rate of return a company must earn on its investments to satisfy its providers of capital, both debt and equity. It is commonly calculated as the weighted average cost of capital (WACC), blending the after-tax cost of debt and the cost of equity.",
+    "professionalDef": "The cost of capital is the blended required return on a firm's financing, computed as the weighted average of the after-tax cost of debt and the cost of equity, each weighted by its share of the capital structure at market value. It serves as the hurdle rate and discount rate for evaluating investments, with the cost of equity typically derived from a model such as the CAPM.",
+    "examples": [
+      "Our weighted average cost of capital is around eight percent.",
+      "The project only creates value if it returns above our cost of capital.",
+      "A higher cost of capital lowers the value in the DCF."
+    ],
+    "collocations": [
+      "weighted average cost of capital",
+      "cost of equity",
+      "cost of debt",
+      "hurdle rate",
+      "WACC"
+    ],
+    "related": ["discounted-cash-flow", "beta", "leverage", "equity"],
+    "compare": [
+      { "term": "Cost of Debt", "distinction": "Cost of capital blends debt and equity; cost of debt is only the borrowing component." }
+    ],
+    "commonMistakes": [
+      "Using the cost of debt alone as the discount rate instead of the blended WACC.",
+      "Forgetting to use the after-tax cost of debt."
+    ],
+    "savedForReview": false
+  }
+]
