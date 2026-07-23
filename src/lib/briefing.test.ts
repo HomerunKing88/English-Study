@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildCompactBriefing, buildFullBriefing } from './briefing';
+import {
+  buildCompactBriefing,
+  buildFullBriefing,
+  buildStandingInstructions,
+} from './briefing';
 import { SCENARIOS, scenariosByTrack, scenarioForDay } from './scenarios';
 import { newFsrsState } from './fsrs';
 import type { Expression } from './types';
@@ -65,6 +69,42 @@ describe('buildCompactBriefing', () => {
     expect(out).toContain('Mode:');
     expect(out).toContain('Difficulty: Natural');
     expect(out).toContain('headwind');
+  });
+
+  it('includes the track line', () => {
+    const out = buildCompactBriefing(base);
+    // base uses the earnings-call (finance) scenario.
+    expect(out).toContain('Track: Finance & Business');
+  });
+});
+
+describe('buildStandingInstructions', () => {
+  it('holds the coaching rules and the JSON contract', () => {
+    const out = buildStandingInstructions({ koreanHelpEnabled: true });
+    expect(out).toContain('English only');
+    expect(out).toContain('Do NOT correct me mid-conversation');
+    expect(out).toContain('```json');
+    expect(out).toContain('target_expression_usage');
+  });
+
+  it('explains the per-session parameter block it will receive', () => {
+    const out = buildStandingInstructions({ koreanHelpEnabled: true });
+    expect(out).toContain('Track:');
+    expect(out).toContain('Review targets:');
+  });
+
+  it('respects the Korean-help preference', () => {
+    expect(buildStandingInstructions({ koreanHelpEnabled: false })).toContain(
+      'Do not use Korean',
+    );
+    expect(buildStandingInstructions({ koreanHelpEnabled: true })).toContain(
+      'help in Korean',
+    );
+  });
+
+  it('does not contain a specific day\'s topic (it is standing, not daily)', () => {
+    const out = buildStandingInstructions({ koreanHelpEnabled: true });
+    expect(out).not.toContain('Earnings call');
   });
 });
 

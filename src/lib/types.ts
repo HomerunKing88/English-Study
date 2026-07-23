@@ -227,6 +227,12 @@ export interface Settings {
   dailyPlan: DailyPlanConfig;
   /** Optional: allow the "Need help in Korean?" affordance (Principle 1). */
   koreanHelpEnabled: boolean;
+  /**
+   * Whether the learner has set up a ChatGPT Custom GPT holding the standing
+   * coaching instructions. When true, Today defaults to the compact briefing
+   * (just the day's parameters) instead of the full one (friction budget, §2).
+   */
+  usesCustomGpt: boolean;
   createdAt: Iso;
   updatedAt: Iso;
 }

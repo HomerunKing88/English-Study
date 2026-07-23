@@ -3,6 +3,7 @@ import { resetDb } from './__testutils';
 import { exportBackup, importBackup, serializeBackup, assertEnvelope } from './backup';
 import { getAllExpressions, upsertExpression } from './expressions';
 import { getAllSessions } from './sessions';
+import { getSettings, updateSettings } from './settings';
 import { captureSession } from './capture';
 import type { BackupEnvelope, CorrectionPayload } from './types';
 
@@ -168,5 +169,48 @@ describe('importBackup — record-level validation & data preservation', () => {
     const corrupt = { ...good, data: { ...good.data, expressions: [dupe, { ...dupe }] } };
     await expect(importBackup(JSON.stringify(corrupt))).rejects.toThrow();
     expect(await getAllExpressions()).toHaveLength(before.length);
+  });
+});
+
+describe('settings backup compatibility (usesCustomGpt)', () => {
+  it('round-trips the usesCustomGpt preference', async () => {
+    await updateSettings({ usesCustomGpt: true });
+    const exported = await exportBackup();
+    await resetDb();
+    await importBackup(serializeBackup(exported));
+    expect((await getSettings()).usesCustomGpt).toBe(true);
+  });
+
+  it('accepts an older settings backup missing usesCustomGpt, defaulting to false', async () => {
+    const legacy = {
+      app: 'english-os',
+      version: 1,
+      exportedAt: '2026-01-01T00:00:00.000Z',
+      data: {
+        expressions: [],
+        reviewLogs: [],
+        sessions: [],
+        concepts: [],
+        settings: {
+          id: 'settings',
+          streakCount: 3,
+          lastActiveDate: null,
+          dailyPlan: {
+            reviewTarget: 15,
+            sessionMinutes: 10,
+            defaultMode: 'TopicTalk',
+            defaultDifficulty: 'Natural',
+          },
+          koreanHelpEnabled: true,
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-01-01T00:00:00.000Z',
+          // note: no usesCustomGpt field
+        },
+      },
+    };
+    await importBackup(JSON.stringify(legacy));
+    const s = await getSettings();
+    expect(s.usesCustomGpt).toBe(false);
+    expect(s.streakCount).toBe(3);
   });
 });

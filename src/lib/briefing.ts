@@ -64,6 +64,25 @@ const TRACK_FRAMING: Record<Track, string> = {
     'FOCUS: finance & business English for meetings, calls, and investor discussions.',
 };
 
+/** Short human label for a track, used in compact parameter lines. */
+const TRACK_LABEL: Record<Track, string> = {
+  everyday: 'Everyday',
+  finance: 'Finance & Business',
+};
+
+/** The standing coaching rules shared by the full briefing and the Custom GPT
+ * instructions. Kept in one place so the two never drift apart. */
+function coachingRules(koreanHelpEnabled: boolean): string[] {
+  return [
+    'English only. Never switch to Korean during the conversation.',
+    'Do NOT correct me mid-conversation — let the ideas flow.',
+    'Ask follow-up questions so I keep speaking; I should talk ~70% of the time.',
+    koreanHelpEnabled
+      ? 'Only if I explicitly say "help in Korean", give a one-line Korean hint, then return to English.'
+      : 'Do not use Korean at all.',
+  ];
+}
+
 const MODE_LABEL: Record<SessionMode, string> = {
   JustTalk: 'Just Talk',
   TopicTalk: 'Topic Talk',
@@ -96,14 +115,7 @@ function targetLines(targets: Expression[]): string {
 export function buildFullBriefing(input: BriefingInput): string {
   const { scenario, difficulty, targets, sessionMinutes, koreanHelpEnabled } = input;
 
-  const rules = [
-    'English only. Never switch to Korean during the conversation.',
-    'Do NOT correct me mid-conversation — let the ideas flow.',
-    'Ask follow-up questions so I keep speaking; I should talk ~70% of the time.',
-    koreanHelpEnabled
-      ? 'Only if I explicitly say "help in Korean", give a one-line Korean hint, then return to English.'
-      : 'Do not use Korean at all.',
-  ];
+  const rules = coachingRules(koreanHelpEnabled);
 
   return [
     `You are my English speaking coach. This is a ${sessionMinutes}-minute ${MODE_LABEL[scenario.mode]} voice session.`,
@@ -138,10 +150,51 @@ export function buildCompactBriefing(input: BriefingInput): string {
   const targetsInline =
     targets.length > 0 ? targets.map((t) => `"${t.text}"`).join(', ') : 'none due';
   return [
+    `Track: ${TRACK_LABEL[scenario.track]}`,
     `Mode: ${MODE_LABEL[scenario.mode]}`,
     `Topic: ${scenario.title}`,
     `Difficulty: ${difficulty}`,
     `Minutes: ${sessionMinutes}`,
     `Review targets: ${targetsInline}`,
+  ].join('\n');
+}
+
+/**
+ * The one-time "standing instructions" a learner pastes into a ChatGPT Custom
+ * GPT's Instructions field. It holds everything that does NOT change day to day
+ * — the coaching rules and the closing JSON contract — so that each day only a
+ * short compact parameter block (buildCompactBriefing) needs to be sent.
+ *
+ * This is the friction-budget lever from §2: set up once, then daily effort
+ * drops to a couple of lines (which can even be spoken aloud to the GPT).
+ */
+export function buildStandingInstructions(opts: { koreanHelpEnabled: boolean }): string {
+  const rules = coachingRules(opts.koreanHelpEnabled);
+  return [
+    'You are my personal English speaking coach. We do short spoken practice',
+    'sessions (about 10 minutes each). The overall goal is everyday',
+    'conversational fluency first, and finance/business English second.',
+    '',
+    'STANDING RULES — always apply, every session:',
+    ...rules.map((r) => `- ${r}`),
+    '',
+    'AT THE START of each session I will give you the parameters in this form:',
+    '  Track: Everyday | Finance & Business',
+    '  Mode: Just Talk | Topic Talk | Scenario Talk | Challenge Talk',
+    '  Topic: <the scenario>',
+    '  Difficulty: Comfortable | Natural | Challenging',
+    '  Minutes: <length>',
+    '  Review targets: "phrase one", "phrase two", ...',
+    'Use them to frame the roleplay and set your pace. Create natural situations',
+    'where I would use each review target. If review targets say "none due",',
+    'introduce a few fresh, useful phrases instead.',
+    '',
+    'AT THE VERY END of the session, output EXACTLY ONE fenced JSON code block',
+    'in this shape and nothing after it:',
+    '```json',
+    CONTRACT_TEMPLATE,
+    '```',
+    'Fill target_expression_usage with each weaved expression and whether I used',
+    'it correctly. Keep note_en explanations in easy English.',
   ].join('\n');
 }
