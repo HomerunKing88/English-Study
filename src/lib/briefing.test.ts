@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildCompactBriefing, buildFullBriefing } from './briefing';
-import { SCENARIOS, scenarioForDay } from './scenarios';
+import { SCENARIOS, scenariosByTrack, scenarioForDay } from './scenarios';
 import { newFsrsState } from './fsrs';
 import type { Expression } from './types';
 
@@ -74,5 +74,35 @@ describe('scenarioForDay', () => {
   });
   it('always returns a configured scenario', () => {
     expect(SCENARIOS.map((s) => s.key)).toContain(scenarioForDay('2026-01-01').key);
+  });
+  it('features an everyday scenario by default (the primary goal)', () => {
+    expect(scenarioForDay('2026-01-01').track).toBe('everyday');
+  });
+});
+
+describe('tracks', () => {
+  it('splits scenarios into everyday and finance', () => {
+    const everyday = scenariosByTrack('everyday');
+    const finance = scenariosByTrack('finance');
+    expect(everyday.length).toBeGreaterThan(0);
+    expect(finance.length).toBeGreaterThan(0);
+    expect(everyday.length + finance.length).toBe(SCENARIOS.length);
+  });
+
+  it('prioritizes everyday with the larger scenario set', () => {
+    expect(scenariosByTrack('everyday').length).toBeGreaterThanOrEqual(
+      scenariosByTrack('finance').length,
+    );
+  });
+
+  it('frames an everyday briefing around conversational fluency', () => {
+    const scenario = scenariosByTrack('everyday')[0]!;
+    const out = buildFullBriefing({ ...base, scenario });
+    expect(out).toContain('everyday conversational fluency');
+  });
+
+  it('frames a finance briefing around business English', () => {
+    const out = buildFullBriefing(base); // base uses the earnings-call (finance) scenario
+    expect(out).toContain('finance & business English');
   });
 });
