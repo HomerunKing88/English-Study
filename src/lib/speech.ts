@@ -47,6 +47,32 @@ export function isSpeechRecognitionSupported(): boolean {
   return getRecognitionCtor() !== null;
 }
 
+/**
+ * iOS Safari — especially inside a standalone (home-screen) PWA — exposes
+ * `webkitSpeechRecognition` but its implementation is unreliable and can lock up
+ * the whole WebView when started. We treat it as unusable there and fall back to
+ * a manual "say it aloud" flow rather than risk freezing the app.
+ */
+export function speechRecognitionUnreliable(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  const isIosDevice = /iPhone|iPad|iPod/i.test(ua);
+  // iPadOS 13+ reports as desktop Safari but is a touch device.
+  const isIpadOs =
+    navigator.platform === 'MacIntel' && (navigator.maxTouchPoints ?? 0) > 1;
+  const isStandalone =
+    (navigator as unknown as { standalone?: boolean }).standalone === true ||
+    (typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(display-mode: standalone)').matches);
+  return isIosDevice || isIpadOs || (isStandalone && /Safari/i.test(ua));
+}
+
+/** Whether the mic-based Speak-it path should be offered at all. */
+export function isSpeechRecognitionUsable(): boolean {
+  return isSpeechRecognitionSupported() && !speechRecognitionUnreliable();
+}
+
 export function isSpeechSynthesisSupported(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
 }
@@ -79,6 +105,10 @@ export interface SpeakItCallbacks {
  * was presented; latency is measured from there to first detected speech.
  * Returns a handle to stop, or null if unsupported.
  */
+/** Hard cap on a single listen so the UI can never get stuck waiting for an
+ * `onend` that some engines never fire. */
+const MAX_LISTEN_MS = 20_000;
+
 export function startSpeakIt(
   promptShownAt: number,
   cb: SpeakItCallbacks,
@@ -87,11 +117,41 @@ export function startSpeakIt(
   const Ctor = getRecognitionCtor();
   if (!Ctor) return null;
 
+  // Avoid an audio-session conflict with the "Hear it" prompt readout.
+  if (isSpeechSynthesisSupported()) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      // ignore
+    }
+  }
+
   const rec = new Ctor();
   rec.lang = lang;
   rec.continuous = false;
   rec.interimResults = true;
   let firedStart = false;
+  let ended = false;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  const finish = () => {
+    if (ended) return;
+    ended = true;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    cb.onEnd?.();
+  };
+
+  const safeAbort = () => {
+    try {
+      rec.abort();
+    } catch {
+      // Some engines throw on abort; treat it as ended regardless.
+    }
+    finish();
+  };
 
   rec.onspeechstart = () => {
     if (firedStart) return;
@@ -116,8 +176,11 @@ export function startSpeakIt(
     cb.onTranscript?.(text.trim(), isFinal);
   };
 
-  rec.onerror = (e) => cb.onError?.(e.error);
-  rec.onend = () => cb.onEnd?.();
+  rec.onerror = (e) => {
+    cb.onError?.(e.error);
+    finish();
+  };
+  rec.onend = () => finish();
 
   try {
     rec.start();
@@ -125,5 +188,8 @@ export function startSpeakIt(
     return null;
   }
 
-  return { stop: () => rec.abort() };
+  // Safety net: force-stop if nothing ever ends the session.
+  timer = setTimeout(safeAbort, MAX_LISTEN_MS);
+
+  return { stop: safeAbort };
 }
