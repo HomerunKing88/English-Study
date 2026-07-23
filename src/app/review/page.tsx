@@ -9,7 +9,7 @@ import { markActiveToday } from '@/lib/settings';
 import { buildCard, cardTypeLabel, type ReviewCard } from '@/lib/review';
 import { intervalPreview } from '@/lib/fsrs';
 import {
-  isSpeechRecognitionSupported,
+  isSpeechRecognitionUsable,
   speak,
   startSpeakIt,
   type SpeakItSession,
@@ -120,7 +120,9 @@ function CardView({
   onRate: (rating: Rating, latencyMs: number | null, cardType: ReviewCard['cardType']) => void;
 }) {
   const isSpeak = card.cardType === 'SpeakIt';
-  const speechOk = isSpeak && isSpeechRecognitionSupported();
+  // Only offer the mic path where the browser's speech recognition is actually
+  // reliable — never on iOS (it can freeze the whole PWA).
+  const speechOk = isSpeak && isSpeechRecognitionUsable();
 
   const [latency, setLatency] = useState<number | null>(null);
   const [transcript, setTranscript] = useState('');
@@ -131,6 +133,14 @@ function CardView({
   useEffect(() => {
     shownAt.current = Date.now();
     return () => sessionRef.current?.stop();
+  }, []);
+
+  const stopListening = useCallback(() => {
+    // Reset UI state immediately — never wait on an onend the engine may skip.
+    setListening(false);
+    const s = sessionRef.current;
+    sessionRef.current = null;
+    s?.stop();
   }, []);
 
   const startListening = useCallback(() => {
@@ -157,7 +167,8 @@ function CardView({
           <button
             type="button"
             onClick={() => speak(card.prompt)}
-            className="text-sm text-ink-faint hover:text-ink"
+            disabled={listening}
+            className="text-sm text-ink-faint hover:text-ink disabled:opacity-40"
             aria-label="Read prompt aloud"
           >
             🔊 Hear it
@@ -172,7 +183,7 @@ function CardView({
           <button
             type="button"
             className={listening ? 'btn-ghost' : 'btn-accent'}
-            onClick={listening ? () => sessionRef.current?.stop() : startListening}
+            onClick={listening ? stopListening : startListening}
           >
             {listening ? 'Stop' : '🎙 Start speaking'}
           </button>
@@ -189,9 +200,8 @@ function CardView({
       ) : null}
 
       {isSpeak && !speechOk ? (
-        <p className="mt-3 text-xs text-ink-faint">
-          Speech recognition isn&apos;t available in this browser — say it aloud
-          yourself, then reveal and rate.
+        <p className="mt-4 rounded-xl bg-paper-soft p-4 text-sm text-ink-soft">
+          Say your sentence out loud, then reveal the reference and rate yourself.
         </p>
       ) : null}
 
