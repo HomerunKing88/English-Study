@@ -21,6 +21,7 @@ function defaultSettings(): Settings {
     lastActiveDate: null,
     dailyPlan: DEFAULT_PLAN,
     koreanHelpEnabled: true,
+    usesCustomGpt: false,
     createdAt: now,
     updatedAt: now,
   };
@@ -28,7 +29,15 @@ function defaultSettings(): Settings {
 
 export async function getSettings(): Promise<Settings> {
   const existing = await db.get('settings', 'settings');
-  if (existing) return existing;
+  if (existing) {
+    // Backfill fields added in later versions so older stored settings (and
+    // imported backups) always satisfy the current Settings shape.
+    return {
+      ...defaultSettings(),
+      ...existing,
+      dailyPlan: { ...DEFAULT_PLAN, ...existing.dailyPlan },
+    };
+  }
   const fresh = defaultSettings();
   await db.put('settings', fresh);
   return fresh;

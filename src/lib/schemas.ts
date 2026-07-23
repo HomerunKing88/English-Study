@@ -92,6 +92,8 @@ export const settingsSchema = z.object({
     defaultDifficulty: z.enum(['Comfortable', 'Natural', 'Challenging']),
   }),
   koreanHelpEnabled: z.boolean(),
+  // Added after the first release; older backups omit it, so default it.
+  usesCustomGpt: z.boolean().default(false),
   createdAt: iso,
   updatedAt: iso,
 });

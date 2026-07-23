@@ -41,6 +41,8 @@ export default function TodayPage() {
       setTargets(picked);
       setDueCount(due.length);
       setDifficulty(s.dailyPlan.defaultDifficulty);
+      // With a Custom GPT set up, the short compact briefing is all you need.
+      setCompact(s.usesCustomGpt);
       // Everyday conversation is the primary goal → feature it by default.
       setScenarioKey(scenarioForDay(today, scenariosByTrack('everyday')).key);
       setLoading(false);
@@ -174,7 +176,10 @@ export default function TodayPage() {
         </pre>
 
         <div className="mt-3 flex flex-wrap gap-2">
-          <CopyButton text={briefing} label="Copy briefing" />
+          <CopyButton
+            text={briefing}
+            label={compact ? 'Copy for Custom GPT' : 'Copy briefing'}
+          />
           <a
             href="https://chatgpt.com/"
             target="_blank"
@@ -184,6 +189,22 @@ export default function TodayPage() {
             Open ChatGPT →
           </a>
         </div>
+
+        {compact ? (
+          <p className="mt-3 text-xs text-ink-faint">
+            Send these parameters to your Custom GPT (paste or read aloud), then
+            start the voice session.
+          </p>
+        ) : !settings.usesCustomGpt ? (
+          <p className="mt-3 text-xs text-ink-faint">
+            Tip: set up a{' '}
+            <Link href="/settings" className="font-medium text-accent underline">
+              Custom GPT
+            </Link>{' '}
+            once to send just a couple of lines each day instead of the whole
+            briefing.
+          </p>
+        ) : null}
       </section>
 
       <p className="text-center text-sm text-ink-faint">

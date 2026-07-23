@@ -32,6 +32,22 @@ Today는 두 개의 트랙으로 나뉩니다. **1차 목표는 일상 대화 �
 - **Finance & Business (금융·비즈니스):** 실적발표 Q&A, 투자자 미팅, 로드쇼, 이사회
   보고, 딜 협상 등 — 심화 용어 학습은 **Explore(Finance Academy)**에서 별도로
 
+## Custom GPT로 매일 마찰 줄이기 (iPhone 권장)
+
+대화는 ChatGPT 앱에서만 하므로 두 앱을 오가는 것은 불가피합니다. 하지만 **Custom GPT**를
+한 번 설정하면 매일의 복사 부담이 크게 줄어듭니다.
+
+1. **1회 설정:** Settings → "ChatGPT setup — Custom GPT"에서 **표준 지시문(standing
+   instructions)을 복사** → ChatGPT에서 새 GPT를 만들어 Instructions에 붙여넣기 → 저장.
+   이 지시문에는 코칭 규칙과 종료 시 JSON 계약이 모두 담겨 있습니다.
+2. **"I use a Custom GPT" 토글을 켜기** → 이후 Today가 **compact 브리핑**(그날의
+   Track/Mode/Topic/Difficulty/Minutes/Review targets 몇 줄)만 내보냅니다. 이건 복사
+   대신 **음성으로 읽어줘도** 됩니다.
+3. 세션 종료 시 ChatGPT가 낸 JSON을 복사해 **Capture**에 붙여넣는 단계는 그대로 남습니다.
+
+> **검증 필요:** Custom GPT에서 음성 모드가 잘 동작하는지 먼저 확인하세요. 안 되면 토글을
+> 끄고 기존 full 브리핑(전체 지시문 복사)을 사용하면 됩니다.
+
 ## Phase 1 모듈 (이번 빌드)
 
 | 모듈 | 역할 |

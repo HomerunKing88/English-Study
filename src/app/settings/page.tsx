@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { PageHeader, Loading } from '@/components/ui';
+import { PageHeader, Loading, CopyButton } from '@/components/ui';
 import { getSettings, updateDailyPlan, updateSettings } from '@/lib/settings';
 import { downloadBackup, importBackup, type ImportResult } from '@/lib/backup';
+import { buildStandingInstructions } from '@/lib/briefing';
 import type { Difficulty, Settings, SessionMode } from '@/lib/types';
 
 const MODES: { value: SessionMode; label: string }[] = [
@@ -129,6 +130,50 @@ export default function SettingsPage() {
             }}
           />
         </label>
+      </section>
+
+      <section className="card mb-4">
+        <p className="label mb-1">ChatGPT setup — Custom GPT</p>
+        <p className="mb-3 text-sm text-ink-faint">
+          Set this up once to cut daily copying. Your Custom GPT remembers the
+          coaching rules, so each day you only send the short parameters from
+          Today (you can even read them aloud).
+        </p>
+
+        <label className="mb-4 flex items-center justify-between">
+          <span className="text-sm text-ink-soft">I use a Custom GPT</span>
+          <input
+            type="checkbox"
+            checked={settings.usesCustomGpt}
+            onChange={async (e) => {
+              const next = await updateSettings({ usesCustomGpt: e.target.checked });
+              setSettings(next);
+            }}
+          />
+        </label>
+
+        <p className="label mb-2">One-time setup</p>
+        <ol className="mb-3 list-decimal space-y-1 pl-5 text-sm text-ink-soft">
+          <li>In the ChatGPT app or on chatgpt.com, create a new GPT.</li>
+          <li>Paste the instructions below into its Instructions field.</li>
+          <li>Name it (e.g. &quot;English Coach&quot;) and save.</li>
+          <li>
+            Check that Voice mode works with the GPT. If it doesn&apos;t, turn
+            off the Custom GPT option and use the full briefing from Today.
+          </li>
+        </ol>
+
+        <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-xl bg-ink p-4 text-xs leading-relaxed text-paper">
+          {buildStandingInstructions({ koreanHelpEnabled: settings.koreanHelpEnabled })}
+        </pre>
+        <div className="mt-3">
+          <CopyButton
+            text={buildStandingInstructions({
+              koreanHelpEnabled: settings.koreanHelpEnabled,
+            })}
+            label="Copy instructions"
+          />
+        </div>
       </section>
 
       <section className="card">
