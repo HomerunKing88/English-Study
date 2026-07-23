@@ -13,7 +13,15 @@ import { correctionPayloadSchema } from './contract';
 import { conceptSchema } from './concepts';
 import { BACKUP_VERSION } from './types';
 
-const iso = z.string().min(1);
+/**
+ * An ISO-8601 timestamp. We validate that it actually parses as a date (not
+ * just any non-empty string), so a hand-edited backup with `"not-a-date"` in a
+ * timestamp field is rejected. Note: plain calendar-day fields (Session.date,
+ * Settings.lastActiveDate — "YYYY-MM-DD") intentionally use a looser string.
+ */
+const iso = z
+  .string()
+  .refine((s) => !Number.isNaN(Date.parse(s)), { message: 'must be a valid date' });
 
 export const fsrsStateSchema = z.object({
   stability: z.number(),
@@ -88,19 +96,58 @@ export const settingsSchema = z.object({
   updatedAt: iso,
 });
 
+/** Flag any duplicate key within a store array — always corruption, since the
+ * app exports from key-path stores where keys are unique by construction. Left
+ * unchecked, a `put` would silently overwrite, so the reported import count
+ * would exceed the rows actually stored. */
+function reportDuplicates<T>(
+  rows: T[],
+  key: (row: T) => string,
+  collection: string,
+  ctx: z.RefinementCtx,
+): void {
+  const seen = new Set<string>();
+  rows.forEach((row, i) => {
+    const k = key(row);
+    if (seen.has(k)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['data', collection, i],
+        message: `duplicate ${collection} key "${k}"`,
+      });
+    }
+    seen.add(k);
+  });
+}
+
 /**
- * Full backup envelope, including every record inside each data array. `version`
- * must be a number no newer than this app supports.
+ * Full backup envelope, including every record inside each data array.
+ *
+ * `version` must be a number no newer than this app supports. A `superRefine`
+ * pass additionally rejects duplicate primary keys within any store.
+ *
+ * Referential integrity (e.g. every `ReviewLog.expressionId` pointing to a live
+ * Expression) is deliberately NOT enforced: deleting an expression legitimately
+ * leaves its past review logs and session references behind, so a valid
+ * app-exported backup can contain such "orphans". They do not break stats or
+ * the review queue, so rejecting them would only reject good backups.
  */
-export const backupEnvelopeSchema = z.object({
-  app: z.literal('english-os'),
-  version: z.number().int().max(BACKUP_VERSION),
-  exportedAt: z.string(),
-  data: z.object({
-    expressions: z.array(expressionSchema),
-    reviewLogs: z.array(reviewLogSchema),
-    sessions: z.array(sessionSchema),
-    concepts: z.array(conceptSchema),
-    settings: settingsSchema.nullable(),
-  }),
-});
+export const backupEnvelopeSchema = z
+  .object({
+    app: z.literal('english-os'),
+    version: z.number().int().max(BACKUP_VERSION),
+    exportedAt: z.string(),
+    data: z.object({
+      expressions: z.array(expressionSchema),
+      reviewLogs: z.array(reviewLogSchema),
+      sessions: z.array(sessionSchema),
+      concepts: z.array(conceptSchema),
+      settings: settingsSchema.nullable(),
+    }),
+  })
+  .superRefine((val, ctx) => {
+    reportDuplicates(val.data.expressions, (e) => e.id, 'expressions', ctx);
+    reportDuplicates(val.data.reviewLogs, (r) => r.id, 'reviewLogs', ctx);
+    reportDuplicates(val.data.sessions, (s) => s.id, 'sessions', ctx);
+    reportDuplicates(val.data.concepts, (c) => c.slug, 'concepts', ctx);
+  });

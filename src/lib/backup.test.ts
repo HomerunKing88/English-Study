@@ -120,4 +120,53 @@ describe('importBackup — record-level validation & data preservation', () => {
     const res = await importBackup(serializeBackup(good));
     expect(res.expressions).toBe(good.data.expressions.length);
   });
+
+  it('rejects duplicate expression ids (would silently overwrite on put)', async () => {
+    const good = await seedAndExport();
+    const dupe = good.data.expressions[0]!;
+    const corrupt = {
+      ...good,
+      data: { ...good.data, expressions: [dupe, { ...dupe }] },
+    };
+    await expect(importBackup(JSON.stringify(corrupt))).rejects.toThrow(/duplicate/i);
+  });
+
+  it('rejects duplicate concept slugs', async () => {
+    const good = await seedAndExport();
+    const concept = {
+      slug: 'bond',
+      term: 'Bond',
+      category: 'Fixed Income',
+      easyDef: 'x',
+      standardDef: 'x',
+      professionalDef: 'x',
+      examples: [],
+      collocations: [],
+      related: [],
+      compare: [],
+      commonMistakes: [],
+      savedForReview: true,
+    };
+    const corrupt = {
+      ...good,
+      data: { ...good.data, concepts: [concept, { ...concept }] },
+    };
+    await expect(importBackup(JSON.stringify(corrupt))).rejects.toThrow(/duplicate/i);
+  });
+
+  it('rejects a non-date value in a timestamp field', async () => {
+    const good = await seedAndExport();
+    const expr = { ...good.data.expressions[0]!, createdAt: 'not-a-date' };
+    const corrupt = { ...good, data: { ...good.data, expressions: [expr] } };
+    await expect(importBackup(JSON.stringify(corrupt))).rejects.toThrow(/valid date|validation failed/i);
+  });
+
+  it('preserves data when a duplicate-key import is rejected', async () => {
+    const good = await seedAndExport();
+    const before = await getAllExpressions();
+    const dupe = good.data.expressions[0]!;
+    const corrupt = { ...good, data: { ...good.data, expressions: [dupe, { ...dupe }] } };
+    await expect(importBackup(JSON.stringify(corrupt))).rejects.toThrow();
+    expect(await getAllExpressions()).toHaveLength(before.length);
+  });
 });
