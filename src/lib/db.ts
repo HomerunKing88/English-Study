@@ -188,3 +188,51 @@ export async function count(store: StoreName): Promise<number> {
   const os = tx(db, store, 'readonly');
   return promisifyRequest(os.count());
 }
+
+export interface ReplaceAllPayload {
+  expressions: Expression[];
+  reviewLogs: ReviewLog[];
+  sessions: Session[];
+  concepts: Concept[];
+  settings: Settings | null;
+}
+
+/**
+ * Atomically replace the entire database contents in ONE transaction spanning
+ * every store: clear each store, then write the new records. If any operation
+ * fails, IndexedDB aborts the whole transaction and rolls back — so the
+ * existing data is never left half-deleted. This is the safe primitive behind
+ * backup import.
+ */
+export async function replaceAll(payload: ReplaceAllPayload): Promise<void> {
+  const db = await openDb();
+  const names: StoreName[] = [
+    STORES.expressions,
+    STORES.reviewLogs,
+    STORES.sessions,
+    STORES.concepts,
+    STORES.settings,
+  ];
+  const t = db.transaction(names, 'readwrite');
+
+  const writeStore = <T>(name: StoreName, rows: T[]) => {
+    const os = t.objectStore(name);
+    os.clear();
+    for (const row of rows) os.put(row);
+  };
+
+  writeStore(STORES.expressions, payload.expressions);
+  writeStore(STORES.reviewLogs, payload.reviewLogs);
+  writeStore(STORES.sessions, payload.sessions);
+  writeStore(STORES.concepts, payload.concepts);
+
+  const settingsStore = t.objectStore(STORES.settings);
+  settingsStore.clear();
+  if (payload.settings) settingsStore.put(payload.settings);
+
+  await new Promise<void>((resolve, reject) => {
+    t.oncomplete = () => resolve();
+    t.onerror = () => reject(t.error ?? new Error('replaceAll failed'));
+    t.onabort = () => reject(t.error ?? new Error('replaceAll aborted'));
+  });
+}

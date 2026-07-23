@@ -10,6 +10,7 @@
 
 import * as db from './db';
 import { nowIso } from './id';
+import { backupEnvelopeSchema } from './schemas';
 import { BACKUP_VERSION, type BackupEnvelope } from './types';
 
 export async function exportBackup(): Promise<BackupEnvelope> {
@@ -81,8 +82,14 @@ export function assertEnvelope(value: unknown): asserts value is BackupEnvelope 
 }
 
 /**
- * Replace all local data with the contents of an envelope. Existing stores are
- * cleared first so the result exactly matches the backup.
+ * Replace all local data with the contents of an envelope.
+ *
+ * Safety contract (Principle 3 — never lose learning history):
+ *   1. Every record is validated with zod BEFORE any existing data is touched.
+ *      On any failure we throw and the current data is left completely intact.
+ *   2. The actual clear-and-rewrite runs in a single IndexedDB transaction
+ *      (`db.replaceAll`), so even an unexpected mid-write error rolls back
+ *      rather than leaving the store half-deleted.
  */
 export async function importBackup(raw: string): Promise<ImportResult> {
   let parsed: unknown;
@@ -91,24 +98,31 @@ export async function importBackup(raw: string): Promise<ImportResult> {
   } catch {
     throw new Error('Backup is not valid JSON.');
   }
+
+  // Friendly, structural first pass (nice messages for the common cases:
+  // wrong app, too-new version, missing arrays).
   assertEnvelope(parsed);
-  const { data } = parsed;
 
-  await Promise.all([
-    db.clear('expressions'),
-    db.clear('reviewLogs'),
-    db.clear('sessions'),
-    db.clear('concepts'),
-    db.clear('settings'),
-  ]);
+  // Full record-level validation. Nothing below this line mutates the database,
+  // so a structurally-valid-but-corrupt file is rejected with data untouched.
+  const result = backupEnvelopeSchema.safeParse(parsed);
+  if (!result.success) {
+    const first = result.error.issues[0];
+    const where = first?.path.join('.') || 'data';
+    const why = first?.message ?? 'invalid';
+    throw new Error(
+      `Backup validation failed at "${where}": ${why}. No data was changed.`,
+    );
+  }
 
-  await Promise.all([
-    db.putMany('expressions', data.expressions),
-    db.putMany('reviewLogs', data.reviewLogs),
-    db.putMany('sessions', data.sessions),
-    db.putMany('concepts', data.concepts),
-    data.settings ? db.putMany('settings', [data.settings]) : Promise.resolve(),
-  ]);
+  const { data } = result.data;
+  await db.replaceAll({
+    expressions: data.expressions,
+    reviewLogs: data.reviewLogs,
+    sessions: data.sessions,
+    concepts: data.concepts,
+    settings: data.settings,
+  });
 
   return {
     expressions: data.expressions.length,

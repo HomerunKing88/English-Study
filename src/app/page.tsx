@@ -3,8 +3,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { PageHeader, CopyButton, Loading } from '@/components/ui';
-import { SCENARIOS, scenarioForDay } from '@/lib/scenarios';
-import { buildCompactBriefing, buildFullBriefing, type BriefingScenario } from '@/lib/briefing';
+import { scenariosByTrack, scenarioForDay, TRACK_META, TRACK_ORDER } from '@/lib/scenarios';
+import {
+  buildCompactBriefing,
+  buildFullBriefing,
+  type BriefingScenario,
+  type Track,
+} from '@/lib/briefing';
 import { pickReviewTargets, getDueExpressions } from '@/lib/expressions';
 import { getSettings } from '@/lib/settings';
 import { localDay } from '@/lib/id';
@@ -16,6 +21,7 @@ export default function TodayPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [targets, setTargets] = useState<Expression[]>([]);
   const [dueCount, setDueCount] = useState(0);
+  const [track, setTrack] = useState<Track>('everyday');
   const [scenarioKey, setScenarioKey] = useState<string>('');
   const [difficulty, setDifficulty] = useState<Difficulty>('Natural');
   const [compact, setCompact] = useState(false);
@@ -35,7 +41,8 @@ export default function TodayPage() {
       setTargets(picked);
       setDueCount(due.length);
       setDifficulty(s.dailyPlan.defaultDifficulty);
-      setScenarioKey(scenarioForDay(today).key);
+      // Everyday conversation is the primary goal → feature it by default.
+      setScenarioKey(scenarioForDay(today, scenariosByTrack('everyday')).key);
       setLoading(false);
     })();
     return () => {
@@ -43,10 +50,19 @@ export default function TodayPage() {
     };
   }, []);
 
+  const trackScenarios = useMemo(() => scenariosByTrack(track), [track]);
+
   const scenario: BriefingScenario | undefined = useMemo(
-    () => SCENARIOS.find((s) => s.key === scenarioKey),
-    [scenarioKey],
+    () => trackScenarios.find((s) => s.key === scenarioKey),
+    [trackScenarios, scenarioKey],
   );
+
+  // When the learner switches tracks, feature that track's daily scenario.
+  function onSelectTrack(next: Track) {
+    if (next === track) return;
+    setTrack(next);
+    setScenarioKey(scenarioForDay(localDay(), scenariosByTrack(next)).key);
+  }
 
   const briefing = useMemo(() => {
     if (!settings || !scenario) return '';
@@ -76,9 +92,29 @@ export default function TodayPage() {
       </div>
 
       <section className="card mb-4">
-        <p className="label mb-2">Scenario</p>
+        <p className="label mb-2">Track</p>
+        <div className="mb-2 grid grid-cols-2 gap-2">
+          {TRACK_ORDER.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => onSelectTrack(t)}
+              aria-pressed={t === track}
+              className={`btn-ghost flex-col items-start gap-0.5 py-2 text-left ${
+                t === track ? 'border-accent bg-accent-soft' : ''
+              }`}
+            >
+              <span className="text-sm font-semibold">{TRACK_META[t].label}</span>
+              <span className="text-[11px] font-normal text-ink-faint">
+                {TRACK_META[t].blurb}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <p className="label mb-2 mt-5">Scenario</p>
         <div className="flex flex-wrap gap-2">
-          {SCENARIOS.map((s) => (
+          {trackScenarios.map((s) => (
             <button
               key={s.key}
               type="button"

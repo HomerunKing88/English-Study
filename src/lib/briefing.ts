@@ -13,6 +13,12 @@
 
 import type { Difficulty, Expression, SessionMode } from './types';
 
+/**
+ * Learning track. The primary goal is everyday conversational fluency; finance
+ * and business English is a deliberate, separate track studied at its own time.
+ */
+export type Track = 'everyday' | 'finance';
+
 export interface BriefingScenario {
   /** Short id used for the topic label. */
   key: string;
@@ -20,6 +26,8 @@ export interface BriefingScenario {
   /** One-line setup ChatGPT uses to frame the roleplay. */
   prompt: string;
   mode: SessionMode;
+  /** Which learning track this scenario belongs to. */
+  track: Track;
 }
 
 export interface BriefingInput {
@@ -30,13 +38,30 @@ export interface BriefingInput {
   koreanHelpEnabled: boolean;
 }
 
-const DIFFICULTY_GUIDANCE: Record<Difficulty, string> = {
-  Comfortable:
-    'Speak slowly and simply. Use common vocabulary. Rephrase if I hesitate.',
-  Natural:
-    'Speak at a normal native pace with everyday business vocabulary.',
-  Challenging:
-    'Speak quickly with rich, idiomatic, executive-level vocabulary. Push me.',
+const DIFFICULTY_GUIDANCE: Record<Track, Record<Difficulty, string>> = {
+  everyday: {
+    Comfortable:
+      'Speak slowly and simply. Use common everyday vocabulary. Rephrase if I hesitate.',
+    Natural:
+      'Speak at a normal native pace with natural, casual everyday vocabulary.',
+    Challenging:
+      'Speak quickly with rich, idiomatic native expressions and slang. Push me.',
+  },
+  finance: {
+    Comfortable:
+      'Speak slowly and simply. Use common business vocabulary. Rephrase if I hesitate.',
+    Natural:
+      'Speak at a normal native pace with everyday business vocabulary.',
+    Challenging:
+      'Speak quickly with rich, idiomatic, executive-level vocabulary. Push me.',
+  },
+};
+
+const TRACK_FRAMING: Record<Track, string> = {
+  everyday:
+    'FOCUS: everyday conversational fluency. Keep it natural and casual, like talking with a friend.',
+  finance:
+    'FOCUS: finance & business English for meetings, calls, and investor discussions.',
 };
 
 const MODE_LABEL: Record<SessionMode, string> = {
@@ -83,10 +108,12 @@ export function buildFullBriefing(input: BriefingInput): string {
   return [
     `You are my English speaking coach. This is a ${sessionMinutes}-minute ${MODE_LABEL[scenario.mode]} voice session.`,
     '',
+    TRACK_FRAMING[scenario.track],
+    '',
     `TOPIC / SCENARIO: ${scenario.title}`,
     scenario.prompt,
     '',
-    `DIFFICULTY: ${difficulty}. ${DIFFICULTY_GUIDANCE[difficulty]}`,
+    `DIFFICULTY: ${difficulty}. ${DIFFICULTY_GUIDANCE[scenario.track][difficulty]}`,
     '',
     'WEAVE THESE EXPRESSIONS IN naturally (these are my spaced-review items — create situations where I would use them):',
     targetLines(targets),
