@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <ServiceWorkerRegister />
-        <div className="mx-auto flex min-h-dvh max-w-content flex-col px-4 pb-28 pt-6 sm:pb-8">
+        <div className="mx-auto flex min-h-dvh max-w-content flex-col px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-6 sm:pb-8">
           <main className="flex-1">{children}</main>
         </div>
         <Nav />
